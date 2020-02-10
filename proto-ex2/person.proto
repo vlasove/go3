@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package main;
+
+message Post {
+    int32 likes = 1;
+    int32 dislikes = 2;
+}
+
+message Bloger {
+    string name = 1;
+    string lastname = 2;
+    Post post = 3;
+}
