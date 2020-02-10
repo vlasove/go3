@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+# run this command in terminal before chmod +x script.sh
 sudo apt-get update
 #git
 sudo apt install git
