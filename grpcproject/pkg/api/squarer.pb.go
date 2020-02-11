@@ -4,8 +4,12 @@
 package api
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -116,4 +120,84 @@ var fileDescriptor_0af8d901bd6407ab = []byte{
 	0x1b, 0x84, 0x29, 0x24, 0xa4, 0x97, 0x58, 0x90, 0xa9, 0x87, 0x62, 0x89, 0x94, 0x30, 0x8a, 0x18,
 	0xc4, 0x54, 0x25, 0x86, 0x24, 0x36, 0xb0, 0xc3, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x31,
 	0xa6, 0x28, 0xf8, 0xa9, 0x00, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConnInterface
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion6
+
+// SquarerClient is the client API for Squarer service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type SquarerClient interface {
+	Square(ctx context.Context, in *SquareRequest, opts ...grpc.CallOption) (*SquareResponse, error)
+}
+
+type squarerClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSquarerClient(cc grpc.ClientConnInterface) SquarerClient {
+	return &squarerClient{cc}
+}
+
+func (c *squarerClient) Square(ctx context.Context, in *SquareRequest, opts ...grpc.CallOption) (*SquareResponse, error) {
+	out := new(SquareResponse)
+	err := c.cc.Invoke(ctx, "/api.Squarer/Square", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SquarerServer is the server API for Squarer service.
+type SquarerServer interface {
+	Square(context.Context, *SquareRequest) (*SquareResponse, error)
+}
+
+// UnimplementedSquarerServer can be embedded to have forward compatible implementations.
+type UnimplementedSquarerServer struct {
+}
+
+func (*UnimplementedSquarerServer) Square(ctx context.Context, req *SquareRequest) (*SquareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Square not implemented")
+}
+
+func RegisterSquarerServer(s *grpc.Server, srv SquarerServer) {
+	s.RegisterService(&_Squarer_serviceDesc, srv)
+}
+
+func _Squarer_Square_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SquareRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SquarerServer).Square(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.Squarer/Square",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SquarerServer).Square(ctx, req.(*SquareRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Squarer_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.Squarer",
+	HandlerType: (*SquarerServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Square",
+			Handler:    _Squarer_Square_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "squarer.proto",
 }
