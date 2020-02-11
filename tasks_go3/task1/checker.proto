@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package api;
+
+service Checker {
+    rpc Check(CheckRequest) returns (CheckResponse) {}
+}
+
+message CheckRequest {
+    string message = 1;
+}
+
+message CheckResponse {
+    int32 answer = 1;
+}

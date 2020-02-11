@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package api;
+
+service Pyramid {
+    rpc BuildPyramid(PyramidRequest) returns (PyramidResponse) {}
+}
+
+message PyramidRequest {
+    int32 h = 1;
+}
+
+message PyramidResponse {
+    string answer = 1;
+}
