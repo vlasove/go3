@@ -19,11 +19,13 @@ type repository interface {
 	GetAll() []*pb.Consignment
 }
 
+//Repository ...
 type Repository struct {
 	mu           sync.RWMutex
 	consignments []*pb.Consignment
 }
 
+//Create ...
 func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, error) {
 	repo.mu.Lock()
 	updated := append(repo.consignments, consignment)
@@ -32,6 +34,7 @@ func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, er
 	return consignment, nil
 }
 
+//GetAll ...
 func (repo *Repository) GetAll() []*pb.Consignment {
 	return repo.consignments
 }
