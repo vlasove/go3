@@ -27,6 +27,17 @@ func parseFile(file string) (*pb.Consignment, error) {
 	return consignment, err
 }
 
+// nicePrint ...
+func nicePrint(c *pb.Consignment) {
+	log.Println("==================CONSIGNMENT DATA===============")
+	log.Printf("Description: %s\n", c.GetDescription())
+	log.Printf("Weight: %d\n", c.GetWeight())
+	log.Printf("Containers: %v\n", c.GetContainers())
+	log.Printf("VesselID: %s\n", c.GetVesselId())
+	log.Println("=================================================")
+	log.Println()
+}
+
 func main() {
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
@@ -58,6 +69,6 @@ func main() {
 		log.Fatalf("Could not list consignments: %v", err)
 	}
 	for _, v := range getAll.Consignments {
-		log.Println(v)
+		nicePrint(v)
 	}
 }

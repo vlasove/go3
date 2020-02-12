@@ -1,0 +1,8 @@
+{
+    "description": "This is third cons",
+    "weight": 15,
+    "containers": [
+      { "customer_id": "cust003", "user_id": "user003", "origin": "SPB" }
+    ],
+    "vessel_id": "vessel003"
+  }
