@@ -8,12 +8,12 @@ import (
 
 	"context"
 
+	micro "github.com/micro/go-micro"
 	pb "github.com/vlasove/project/shippyserver/proto/consignment"
-	"google.golang.org/grpc"
 )
 
 const (
-	address         = "localhost:8081"
+	address         = "localhost:50051"
 	defaultFilename = "consignment.json"
 )
 
@@ -40,12 +40,10 @@ func nicePrint(c *pb.Consignment) {
 
 func main() {
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewShippingServiceClient(conn)
+	service := micro.NewService(micro.Name("shippyclient"))
+	service.Init()
+
+	client := pb.NewShippingServiceClient("shippyserver", service.Client())
 
 	file := defaultFilename
 	if len(os.Args) > 1 {

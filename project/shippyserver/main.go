@@ -2,17 +2,17 @@ package main
 
 import (
 	"context"
-	"log"
-	"net"
+	"fmt"
 	"sync"
 
+	"github.com/micro/go-micro"
+	_ "github.com/micro/go-micro"
 	pb "github.com/vlasove/project/shippyserver/proto/consignment"
-	"google.golang.org/grpc"
 )
 
-const (
-	port = ":8081"
-)
+//const (
+//	port = ":8081"
+//)
 
 type repository interface {
 	Create(*pb.Consignment) (*pb.Consignment, error)
@@ -43,35 +43,46 @@ type service struct {
 	repo repository
 }
 
-func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment) (*pb.Response, error) {
+func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
 
 	consignment, err := s.repo.Create(req)
 	if err != nil {
-		return nil, err
+		return nil
 	}
+	res.Created = true
+	res.Consignment = consignment
 
-	return &pb.Response{Created: true, Consignment: consignment}, nil
+	return nil
 }
 
-func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
+func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
 	consignments := s.repo.GetAll()
-	return &pb.Response{Consignments: consignments}, nil
+	res.Consignments = consignments
+	return nil
 }
 
 func main() {
 
 	repo := &Repository{}
 
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
+	srv := micro.NewService(micro.Name("shippyserver"))
+	srv.Init()
+	pb.RegisterShippingServiceHandler(srv.Server(), &service{repo})
 
-	pb.RegisterShippingServiceServer(s, &service{repo})
-
-	log.Println("Running on port:", port)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	if err := srv.Run(); err != nil {
+		fmt.Println(err)
 	}
+
+	//lis, err := net.Listen("tcp", port)
+	//if err != nil {
+	//	log.Fatalf("failed to listen: %v", err)
+	//}
+	//s := grpc.NewServer()
+
+	//pb.RegisterShippingServiceServer(s, &service{repo})
+
+	//log.Println("Running on port:", port)
+	//if err := s.Serve(lis); err != nil {
+	//	log.Fatalf("failed to serve: %v", err)
+	//}
 }
