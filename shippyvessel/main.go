@@ -19,6 +19,7 @@ type VesselRepository struct {
 	vessels []*pb.Vessel
 }
 
+//FindAvailable ...
 func (repo *VesselRepository) FindAvailable(spec *pb.Specification) (*pb.Vessel, error) {
 	for _, vessel := range repo.vessels {
 		if spec.Capacity <= vessel.Capacity && spec.MaxWeight <= vessel.MaxWeight {
