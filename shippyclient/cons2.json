@@ -1,8 +1,0 @@
-{
-    "description": "This is second cons",
-    "weight": 1550,
-    "containers": [
-      { "customer_id": "cust002", "user_id": "user002", "origin": "Moscow" }
-    ],
-    "vessel_id": "vessel002"
-  }
