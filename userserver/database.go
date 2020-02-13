@@ -16,6 +16,6 @@ func CreateConnection() (*gorm.DB, error) {
 
 	credits := fmt.Sprintf(
 		"host=%s user=%s dbname=%s password=%s sslmode=disable",
-		host, user, DBname, password)
+		host, user, DBName, password)
 	return gorm.Open("postgers", credits)
 }
