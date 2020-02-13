@@ -28,14 +28,14 @@ func (repo *UserRepository) Get(id string) (*pb.User, error) {
 	var user *pb.User
 	user.Id = id
 	if err := repo.db.Find(&user).Error; err != nil {
-		return nul, err
+		return nil, err
 	}
 	return user, nil
 }
 
 func (repo *UserRepository) GetByEmailAndPassword(user *pb.User) (*pb.User, error) {
 	if err := repo.db.Find(&user).Error; err != nil {
-		return nul, err
+		return nil, err
 	}
 	return user, nil
 }
