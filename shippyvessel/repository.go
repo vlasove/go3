@@ -3,6 +3,7 @@ package main
 import (
 	pb "github.com/vlasove/shippyvessel/proto/vessel"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const (
@@ -13,6 +14,7 @@ const (
 //Repository ...
 type Repository interface {
 	FindAvailable(*pb.Specification) (*pb.Vessel, error)
+	Create(*pb.Vessel) error
 	Close()
 }
 
@@ -34,9 +36,16 @@ func (repo *VesselRepository) collection() *mgo.Collection {
 func (repo *VesselRepository) FindAvailable(spec *pb.Specification) (*pb.Vessel, error) {
 	// ...
 	var vessel *pb.Vessel
-	err := repo.collection().Find(?????).One(&vessel)
+	err := repo.collection().Find(bson.M{
+		"capacity":  bson.M{"$gte": spec.Capacity},
+		"maxweight": bson.M{"$gte": spec.MaxWeight},
+	}).One(&vessel)
 	if err != nil {
 		return nil, err
 	}
 	return vessel, nil
+}
+
+func (repo *VesselRepository) Create(vessel *pb.Vessel) error {
+	return repo.collection().Insert(vessel)
 }
