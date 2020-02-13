@@ -8,7 +8,8 @@ import (
 
 	"context"
 
-	micro "github.com/micro/go-micro"
+	microclient "github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/config/cmd"
 	pb "github.com/vlasove/shippyclient/proto/consignment"
 )
 
@@ -39,10 +40,9 @@ func nicePrint(c *pb.Consignment) {
 
 func main() {
 
-	service := micro.NewService(micro.Name("shippyclient"))
-	service.Init()
+	cmd.Init()
 
-	client := pb.NewShippingServiceClient("shippyserver", service.Client())
+	client := pb.NewShippingServiceClient("shippyserver", microclient.DefaultClient)
 
 	file := defaultFilename
 	if len(os.Args) > 1 {
@@ -55,9 +55,9 @@ func main() {
 		log.Fatalf("Could not parse file: %v", err)
 	}
 
-	r, err := client.CreateConsignment(context.Background(), consignment)
+	r, err := client.CreateConsignment(context.TODO(), consignment)
 	if err != nil {
-		log.Fatalf("Could not greet: %v", err)
+		log.Fatalf("Could not create: %v", err)
 	}
 	log.Printf("Created: %t", r.Created)
 
