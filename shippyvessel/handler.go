@@ -4,31 +4,26 @@ import (
 	"context"
 
 	pb "github.com/vlasove/shippyvessel/proto/vessel"
+	"gopkg.in/mgo.v2"
 )
 
-type handler struct {
-	repository
+type service struct {
+	session *mgo.Session
 }
 
-// FindAvailable vessels
-func (s *handler) FindAvailable(ctx context.Context, req *pb.Specification, res *pb.Response) error {
+func (s *service) GetRepo() Repository {
+	return &VesselRepository{s.session.Clone()}
+}
 
+func (s *service) FindAvailable(ctx context.Context, req *pb.Specification, res *pb.Response) error {
+	defer s.GetRepo().Close()
 	// Find the next available vessel
-	vessel, err := s.repository.FindAvailable(ctx, MarshalSpecification(req))
+	vessel, err := s.GetRepo().FindAvailable(req)
 	if err != nil {
 		return err
 	}
 
 	// Set the vessel as part of the response message type
-	res.Vessel = UnmarshalVessel(vessel)
-	return nil
-}
-
-// Create a new vessel
-func (s *handler) Create(ctx context.Context, req *pb.Vessel, res *pb.Response) error {
-	if err := s.repository.Create(ctx, MarshalVessel(req)); err != nil {
-		return err
-	}
-	res.Vessel = req
+	res.Vessel = vessel
 	return nil
 }

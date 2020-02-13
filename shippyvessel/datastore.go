@@ -1,20 +1,14 @@
 package main
 
-import (
-	"context"
+import "gopkg.in/mgo.v2"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-)
-
-func CreateClient(ctx context.Context, uri string) (*mongo.Client, error) {
-	conn, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+func CreateSession(host string) (*mgo.Session, error) {
+	session, err := mgo.Dial(host)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := conn.Ping(ctx, nil); err != nil {
-		return nil, err
-	}
-	return conn, nil
+	session.SetMode(mgo.Monotonic, true)
+
+	return session, nil
 }
