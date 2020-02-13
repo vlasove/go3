@@ -8,6 +8,6 @@ build:
 
 .PHONY:run
 run:
-	sudo docker run -p 50052:50051 -e MICRO_SERVER_ADDRESS=:50051 shippyvessel
+	sudo docker run -p 50052:50051 -e MICRO_SERVER_ADDRESS=:50051 shippyvessel_shippyvessel
 
 .DEFAULT_GOAL := proto
