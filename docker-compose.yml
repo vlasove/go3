@@ -41,6 +41,8 @@ services:
       DB_USER: "postgres"
       DB_PASSWORD: "postgres"
       DB_HOST: "database" 
+    depends_on: 
+      - database
 
   datastore:
     image: mongo
